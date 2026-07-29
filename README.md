@@ -88,24 +88,19 @@ with whatever speed you set.
 
 ## Performance
 
-Measured while walking, standalone, on a 16-core desktop:
-
-| | Before | After |
-| --- | --- | --- |
-| Game thread | 12 ms | 5 ms |
-| Render thread | 14 ms | 9 ms |
-
-Three things got it there, in order of impact:
+Keeping a hundred-plus lit, shadow-casting rooms alive at once needs three things,
+roughly in order of how much they mattered:
 
 1. **MegaLights** (`r.MegaLights.EnableForProject`, already set in
-   `Config/DefaultEngine.ini`). A hundred-plus shadow-casting point lights used to
-   cost ~750 shadow views of render-thread setup per frame. MegaLights makes that
-   cost roughly independent of light count — this was by far the biggest win, and
-   it is why hardware ray tracing is a requirement.
-2. **Instanced static meshes.** ~190 actors per chunk became a handful of
-   components, which killed the generation spikes when crossing floors.
+   `Config/DefaultEngine.ini`). A point light casts shadows through six faces, so
+   a hundred of them is several hundred shadow views to set up every frame, and
+   the render thread drowns in it long before the GPU is busy. MegaLights makes
+   that cost roughly independent of light count. This is why hardware ray tracing
+   is a requirement.
+2. **Instanced static meshes.** Roughly 190 actors per chunk became a handful of
+   components, which is what removed the hitch when crossing between floors.
 3. **Spreading chunk builds over frames**, so entering a new layer does not build
-   twenty-five chunks at once.
+   the whole neighbourhood at once.
 
 If you raise `LoadRadius`, raise `LightEveryCells` with it — light count, not
 geometry, is what costs.
