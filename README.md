@@ -7,7 +7,7 @@ built at runtime around the player and torn down again once you leave.
 The whole thing is one C++ pawn (`AInfiniteDungeonPawn`). Drop it into an empty
 level, press Play, and it generates the world around itself.
 
-![Climbing a stairway between floors and emerging into a pillared room](docs/demo.gif)
+![Cresting a stairway between floors, walking on through rooms and doorways into a pillared hall](docs/demo.gif)
 
 ## Requirements
 
